@@ -12,73 +12,49 @@ namespace Order.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class OrdersController : ControllerBase
+public class OrdersController(IMediator mediator, ILogger<OrdersController> logger) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<OrdersController> _logger;
-
-    public OrdersController(IMediator mediator, ILogger<OrdersController> logger)
-    {
-        _mediator = mediator;
-        _logger = logger;
-    }
-
-    /// <summary>
-    /// Gets an order by ID.
-    /// </summary>
     [HttpGet("{orderId:guid}")]
     [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid orderId, CancellationToken cancellationToken)
     {
         var query = new GetOrderByIdQuery { OrderId = orderId };
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = await mediator.Send(query, cancellationToken);
 
         if (result == null)
             return NotFound();
 
         return Ok(result);
     }
-
-    /// <summary>
-    /// Gets all orders for a customer.
-    /// </summary>
+    
     [HttpGet("customer/{customerId:guid}")]
     [ProducesResponseType(typeof(IReadOnlyList<OrderDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByCustomer(Guid customerId, CancellationToken cancellationToken)
     {
         var query = new GetOrdersByCustomerQuery { CustomerId = customerId };
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = await mediator.Send(query, cancellationToken);
         return Ok(result);
     }
-
-    /// <summary>
-    /// Gets orders by status.
-    /// </summary>
+    
     [HttpGet("status/{status}")]
     [ProducesResponseType(typeof(IReadOnlyList<OrderDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByStatus(string status, CancellationToken cancellationToken)
     {
         var query = new GetOrdersByStatusQuery { Status = status };
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = await mediator.Send(query, cancellationToken);
         return Ok(result);
     }
-
-    /// <summary>
-    /// Gets pending orders (awaiting payment).
-    /// </summary>
+    
     [HttpGet("pending")]
     [ProducesResponseType(typeof(IReadOnlyList<OrderDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPending(CancellationToken cancellationToken)
     {
         var query = new GetPendingOrdersQuery();
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = await mediator.Send(query, cancellationToken);
         return Ok(result);
     }
-
-    /// <summary>
-    /// Creates a new order.
-    /// </summary>
+    
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -92,16 +68,13 @@ public class OrdersController : ControllerBase
             Notes = request.Notes
         };
 
-        var orderId = await _mediator.Send(command, cancellationToken);
+        var orderId = await mediator.Send(command, cancellationToken);
 
-        _logger.LogInformation("Order {OrderId} created", orderId);
+        logger.LogInformation("Order {OrderId} created", orderId);
 
         return CreatedAtAction(nameof(GetById), new { orderId }, orderId);
     }
-
-    /// <summary>
-    /// Adds an item to an order.
-    /// </summary>
+    
     [HttpPost("{orderId:guid}/items")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -120,17 +93,14 @@ public class OrdersController : ControllerBase
             Quantity = request.Quantity
         };
 
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await mediator.Send(command, cancellationToken);
 
         if (!result)
             return NotFound();
 
         return Ok();
     }
-
-    /// <summary>
-    /// Removes an item from an order.
-    /// </summary>
+    
     [HttpDelete("{orderId:guid}/items/{itemId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -142,17 +112,14 @@ public class OrdersController : ControllerBase
             ItemId = itemId
         };
 
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await mediator.Send(command, cancellationToken);
 
         if (!result)
             return NotFound();
 
         return Ok();
     }
-
-    /// <summary>
-    /// Updates shipping address.
-    /// </summary>
+    
     [HttpPut("{orderId:guid}/address")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -167,17 +134,14 @@ public class OrdersController : ControllerBase
             NewAddress = request
         };
 
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await mediator.Send(command, cancellationToken);
 
         if (!result)
             return NotFound();
 
         return Ok();
     }
-
-    /// <summary>
-    /// Submits an order for processing.
-    /// </summary>
+    
     [HttpPost("{orderId:guid}/submit")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -188,12 +152,12 @@ public class OrdersController : ControllerBase
 
         try
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result)
                 return NotFound();
 
-            _logger.LogInformation("Order {OrderId} submitted", orderId);
+            logger.LogInformation("Order {OrderId} submitted", orderId);
 
             return Ok();
         }
@@ -202,10 +166,7 @@ public class OrdersController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-
-    /// <summary>
-    /// Cancels an order.
-    /// </summary>
+    
     [HttpPost("{orderId:guid}/cancel")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -223,12 +184,12 @@ public class OrdersController : ControllerBase
 
         try
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result)
                 return NotFound();
 
-            _logger.LogInformation("Order {OrderId} cancelled. Reason: {Reason}", orderId, request.Reason);
+            logger.LogInformation("Order {OrderId} cancelled. Reason: {Reason}", orderId, request.Reason);
 
             return Ok();
         }

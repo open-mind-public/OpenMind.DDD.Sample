@@ -1,6 +1,6 @@
 using BuildingBlocks.Integration;
 using Microsoft.EntityFrameworkCore;
-using Order.Application.Handlers;
+using Order.Application.Commands;
 using Order.Application.IntegrationEventHandlers;
 using Order.Domain.Repositories;
 using Order.Infrastructure.Messaging;

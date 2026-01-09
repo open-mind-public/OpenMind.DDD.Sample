@@ -7,23 +7,14 @@ namespace BuildingBlocks.Integration;
 /// </summary>
 public interface IEventBus
 {
-    /// <summary>
-    /// Publishes an integration event to the message broker.
-    /// </summary>
     Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
         where TEvent : IntegrationEvent;
 
-    /// <summary>
-    /// Subscribes to an integration event type.
-    /// </summary>
     void Subscribe<TEvent, THandler>()
         where TEvent : IntegrationEvent
         where THandler : IIntegrationEventHandler<TEvent>;
 }
 
-/// <summary>
-/// Interface for handling Integration Events.
-/// </summary>
 public interface IIntegrationEventHandler<in TEvent>
     where TEvent : IntegrationEvent
 {
