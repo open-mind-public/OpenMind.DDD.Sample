@@ -1,4 +1,4 @@
-using BuildingBlocks.Integration.EventBus;
+using BuildingBlocks.Integration;
 using Microsoft.EntityFrameworkCore;
 using Order.Application.Handlers;
 using Order.Application.IntegrationEventHandlers;

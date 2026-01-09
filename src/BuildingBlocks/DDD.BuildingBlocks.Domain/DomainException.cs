@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Domain.Exceptions;
+namespace BuildingBlocks.Domain;
 
 /// <summary>
 /// Base exception for domain rule violations.

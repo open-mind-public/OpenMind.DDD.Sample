@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Payment.Domain.ValueObjects;
 
 namespace Payment.Domain.Services;
@@ -11,20 +11,10 @@ namespace Payment.Domain.Services;
 /// </summary>
 public interface IPaymentProcessingService : IDomainService
 {
-    /// <summary>
-    /// Validates if a payment can be processed.
-    /// </summary>
     PaymentValidationResult ValidatePayment(Aggregates.PaymentAggregate.Payment payment);
-
-    /// <summary>
-    /// Calculates any processing fees.
-    /// </summary>
     Money CalculateProcessingFee(Money amount, Aggregates.PaymentAggregate.PaymentMethod method);
 }
 
-/// <summary>
-/// Result of payment validation.
-/// </summary>
 public record PaymentValidationResult
 {
     public bool IsValid { get; init; }
@@ -34,9 +24,6 @@ public record PaymentValidationResult
     public static PaymentValidationResult Failure(string message) => new() { IsValid = false, ErrorMessage = message };
 }
 
-/// <summary>
-/// Implementation of Payment Processing Domain Service.
-/// </summary>
 public class PaymentProcessingService : IPaymentProcessingService
 {
     public PaymentValidationResult ValidatePayment(Aggregates.PaymentAggregate.Payment payment)

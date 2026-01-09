@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Payment.Domain.Aggregates.PaymentAggregate;

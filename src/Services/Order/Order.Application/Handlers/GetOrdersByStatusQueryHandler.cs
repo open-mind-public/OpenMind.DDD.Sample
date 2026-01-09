@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using MediatR;
 using Order.Application.DTOs;
 using Order.Application.Queries;

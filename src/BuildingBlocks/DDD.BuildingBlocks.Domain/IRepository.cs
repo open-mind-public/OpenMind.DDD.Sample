@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Domain.SeedWork;
+namespace BuildingBlocks.Domain;
 
 /// <summary>
 /// Generic Repository interface following DDD principles (Eric Evans).

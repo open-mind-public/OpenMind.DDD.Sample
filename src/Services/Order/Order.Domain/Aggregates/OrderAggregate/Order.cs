@@ -1,5 +1,6 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Order.Domain.Events;
+using Order.Domain.Specifications;
 using Order.Domain.ValueObjects;
 
 namespace Order.Domain.Aggregates.OrderAggregate;
@@ -18,69 +19,29 @@ public class Order : AggregateRoot<OrderId>
 {
     private readonly List<OrderItem> _orderItems = new();
 
-    /// <summary>
-    /// Reference to the customer who placed the order.
-    /// </summary>
     public CustomerId CustomerId { get; private set; }
-
-    /// <summary>
-    /// Shipping address for the order.
-    /// </summary>
     public Address ShippingAddress { get; private set; }
-
-    /// <summary>
-    /// Current status of the order.
-    /// </summary>
     public OrderStatus Status { get; private set; }
-
-    /// <summary>
-    /// When the order was created.
-    /// </summary>
     public DateTime CreatedAt { get; private set; }
-
-    /// <summary>
-    /// When the order was last modified.
-    /// </summary>
     public DateTime? ModifiedAt { get; private set; }
-
-    /// <summary>
-    /// When the order was submitted for processing.
-    /// </summary>
     public DateTime? SubmittedAt { get; private set; }
-
-    /// <summary>
-    /// When payment was confirmed.
-    /// </summary>
     public DateTime? PaidAt { get; private set; }
-
-    /// <summary>
-    /// Optional notes for the order.
-    /// </summary>
     public string? Notes { get; private set; }
 
     /// <summary>
-    /// Read-only access to order items.
-    /// External code cannot modify the collection directly.
+    /// Read-only access to order items - external code cannot modify the collection directly.
     /// </summary>
     public IReadOnlyCollection<OrderItem> OrderItems => _orderItems.AsReadOnly();
 
-    /// <summary>
-    /// Calculated total amount for the order.
-    /// </summary>
     public Money TotalAmount => CalculateTotalAmount();
-
-    /// <summary>
-    /// Currency for this order.
-    /// </summary>
     public string Currency { get; private set; }
 
-    private Order() { } // EF Core
+    private Order() { }
 
-    #region Factory Methods - Encapsulate object creation
+    #region Factory Methods
 
     /// <summary>
-    /// Factory method for creating a new Order.
-    /// This is the only way to create an Order, ensuring all invariants are met.
+    /// Factory method ensures all invariants are met at creation time.
     /// </summary>
     public static Order Create(CustomerId customerId, Address shippingAddress, string currency = "USD")
     {
@@ -132,9 +93,6 @@ public class Order : AggregateRoot<OrderId>
         RaiseDomainEvent(new OrderItemAddedDomainEvent(Id, productId, productName, quantity));
     }
 
-    /// <summary>
-    /// Removes an item from the order.
-    /// </summary>
     public void RemoveItem(OrderItemId itemId)
     {
         if (!Status.CanAddItems())
@@ -148,9 +106,6 @@ public class Order : AggregateRoot<OrderId>
         SetModified();
     }
 
-    /// <summary>
-    /// Updates the quantity of an order item.
-    /// </summary>
     public void UpdateItemQuantity(OrderItemId itemId, int newQuantity)
     {
         if (!Status.CanAddItems())
@@ -172,9 +127,6 @@ public class Order : AggregateRoot<OrderId>
         SetModified();
     }
 
-    /// <summary>
-    /// Updates the shipping address.
-    /// </summary>
     public void UpdateShippingAddress(Address newAddress)
     {
         if (!Status.CanAddItems())
@@ -184,9 +136,6 @@ public class Order : AggregateRoot<OrderId>
         SetModified();
     }
 
-    /// <summary>
-    /// Adds notes to the order.
-    /// </summary>
     public void SetNotes(string notes)
     {
         Notes = notes;
@@ -194,17 +143,19 @@ public class Order : AggregateRoot<OrderId>
     }
 
     /// <summary>
-    /// Submits the order for processing.
-    /// This is a significant state transition that raises a domain event.
+    /// State transition that raises domain event - triggers integration event for Payment Bounded Context.
     /// </summary>
-    public void Submit()
+    public void Submit(decimal minimumOrderValue = 10.00m)
     {
-        // Enforce business rules
         if (!Status.CanBeSubmitted())
             throw new InvalidOperationException($"Cannot submit an order in {Status.Name} status");
 
         if (!_orderItems.Any())
             throw new InvalidOperationException("Cannot submit an order without items");
+
+        var minimumValueSpec = new MinimumOrderValueSpecification(minimumOrderValue);
+        if (!minimumValueSpec.IsSatisfiedBy(this))
+            throw new InvalidOperationException($"Order total must be at least {minimumOrderValue:C}");
 
         Status = OrderStatus.Submitted;
         SubmittedAt = DateTime.UtcNow;
@@ -219,7 +170,6 @@ public class Order : AggregateRoot<OrderId>
     }
 
     /// <summary>
-    /// Marks the order as paid.
     /// Called when payment is confirmed from the Payment Bounded Context.
     /// </summary>
     public void MarkAsPaid(DateTime paidAt)
@@ -234,9 +184,6 @@ public class Order : AggregateRoot<OrderId>
         RaiseDomainEvent(new OrderPaidDomainEvent(Id, paidAt));
     }
 
-    /// <summary>
-    /// Marks the payment as failed.
-    /// </summary>
     public void MarkPaymentFailed(string reason)
     {
         if (Status != OrderStatus.Submitted)
@@ -248,21 +195,16 @@ public class Order : AggregateRoot<OrderId>
         RaiseDomainEvent(new OrderPaymentFailedDomainEvent(Id, reason));
     }
 
-    /// <summary>
-    /// Starts processing the order (after payment).
-    /// </summary>
     public void StartProcessing()
     {
-        if (Status != OrderStatus.Paid)
+        var readySpec = new OrderReadyForProcessingSpecification();
+        if (!readySpec.IsSatisfiedBy(this))
             throw new InvalidOperationException("Only paid orders can be processed");
 
         Status = OrderStatus.Processing;
         SetModified();
     }
 
-    /// <summary>
-    /// Marks the order as shipped.
-    /// </summary>
     public void Ship()
     {
         if (Status != OrderStatus.Processing)
@@ -274,9 +216,6 @@ public class Order : AggregateRoot<OrderId>
         RaiseDomainEvent(new OrderShippedDomainEvent(Id));
     }
 
-    /// <summary>
-    /// Marks the order as delivered.
-    /// </summary>
     public void MarkAsDelivered()
     {
         if (Status != OrderStatus.Shipped)
@@ -288,12 +227,10 @@ public class Order : AggregateRoot<OrderId>
         RaiseDomainEvent(new OrderDeliveredDomainEvent(Id));
     }
 
-    /// <summary>
-    /// Cancels the order.
-    /// </summary>
     public void Cancel(string reason)
     {
-        if (!Status.CanBeCancelled())
+        var cancellableSpec = new CancellableOrderSpecification();
+        if (!cancellableSpec.IsSatisfiedBy(this))
             throw new InvalidOperationException($"Cannot cancel an order in {Status.Name} status");
 
         Status = OrderStatus.Cancelled;

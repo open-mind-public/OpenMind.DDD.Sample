@@ -1,4 +1,4 @@
-using BuildingBlocks.Integration.EventBus;
+using BuildingBlocks.Integration;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Order.IntegrationEvents;

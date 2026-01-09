@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Domain.SeedWork;
+namespace BuildingBlocks.Domain;
 
 /// <summary>
 /// Base class for all entities in the domain.

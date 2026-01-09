@@ -1,6 +1,4 @@
-namespace BuildingBlocks.Integration.EventBus;
-
-using BuildingBlocks.Integration.Events;
+namespace BuildingBlocks.Integration;
 
 /// <summary>
 /// Interface for the Event Bus.

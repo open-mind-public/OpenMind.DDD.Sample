@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Domain.SeedWork;
+namespace BuildingBlocks.Domain;
 
 /// <summary>
 /// Base class for Value Objects in the domain.

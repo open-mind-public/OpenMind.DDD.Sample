@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Payment.Domain.Events;
 using Payment.Domain.ValueObjects;
 
@@ -16,59 +16,19 @@ namespace Payment.Domain.Aggregates.PaymentAggregate;
 public class Payment : AggregateRoot<PaymentId>
 {
     /// <summary>
-    /// Reference to the Order in the Order Bounded Context.
-    /// We only store the ID to maintain loose coupling.
+    /// Reference to Order Bounded Context - loose coupling via ID only.
     /// </summary>
     public OrderReference OrderId { get; private set; }
 
-    /// <summary>
-    /// Reference to the Customer.
-    /// </summary>
     public CustomerReference CustomerId { get; private set; }
-
-    /// <summary>
-    /// Amount to be paid.
-    /// </summary>
     public Money Amount { get; private set; }
-
-    /// <summary>
-    /// Current payment status.
-    /// </summary>
     public PaymentStatus Status { get; private set; }
-
-    /// <summary>
-    /// Payment method used.
-    /// </summary>
     public PaymentMethod Method { get; private set; }
-
-    /// <summary>
-    /// Card details (if card payment).
-    /// </summary>
     public CardDetails? CardDetails { get; private set; }
-
-    /// <summary>
-    /// External transaction ID from payment gateway.
-    /// </summary>
     public string? TransactionId { get; private set; }
-
-    /// <summary>
-    /// Failure reason if payment failed.
-    /// </summary>
     public string? FailureReason { get; private set; }
-
-    /// <summary>
-    /// When the payment was created.
-    /// </summary>
     public DateTime CreatedAt { get; private set; }
-
-    /// <summary>
-    /// When the payment was processed.
-    /// </summary>
     public DateTime? ProcessedAt { get; private set; }
-
-    /// <summary>
-    /// When the payment was completed.
-    /// </summary>
     public DateTime? CompletedAt { get; private set; }
 
     private Payment() { }
@@ -76,8 +36,7 @@ public class Payment : AggregateRoot<PaymentId>
     #region Factory Methods
 
     /// <summary>
-    /// Creates a new Payment for an Order.
-    /// Factory method ensures all required data is present.
+    /// Factory method - ensures all required data is present and invariants are met.
     /// </summary>
     public static Payment CreateForOrder(
         OrderReference orderId,
@@ -118,9 +77,6 @@ public class Payment : AggregateRoot<PaymentId>
 
     #region Behavior Methods
 
-    /// <summary>
-    /// Starts processing the payment.
-    /// </summary>
     public void StartProcessing()
     {
         if (!Status.CanBeProcessed())
@@ -138,8 +94,7 @@ public class Payment : AggregateRoot<PaymentId>
     }
 
     /// <summary>
-    /// Marks the payment as completed.
-    /// This triggers an integration event to notify the Order service.
+    /// Triggers integration event to notify Order Bounded Context.
     /// </summary>
     public void Complete(string transactionId)
     {
@@ -163,7 +118,7 @@ public class Payment : AggregateRoot<PaymentId>
     }
 
     /// <summary>
-    /// Marks the payment as failed.
+    /// Triggers integration event to notify Order Bounded Context.
     /// </summary>
     public void Fail(string reason)
     {
@@ -181,9 +136,6 @@ public class Payment : AggregateRoot<PaymentId>
         RaiseDomainEvent(new PaymentFailedDomainEvent(Id, OrderId, reason));
     }
 
-    /// <summary>
-    /// Refunds the payment.
-    /// </summary>
     public void Refund(string reason)
     {
         if (!Status.CanBeRefunded())
@@ -195,9 +147,6 @@ public class Payment : AggregateRoot<PaymentId>
         RaiseDomainEvent(new PaymentRefundedDomainEvent(Id, OrderId, Amount.Amount, reason));
     }
 
-    /// <summary>
-    /// Cancels the payment.
-    /// </summary>
     public void Cancel(string reason)
     {
         if (!Status.CanBeCancelled())

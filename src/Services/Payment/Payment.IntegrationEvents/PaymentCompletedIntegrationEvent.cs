@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Integration.Events;
+﻿using BuildingBlocks.Integration;
 
 namespace Payment.IntegrationEvents;
 

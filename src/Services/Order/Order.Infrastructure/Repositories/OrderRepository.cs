@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Microsoft.EntityFrameworkCore;
 using Order.Domain.Aggregates.OrderAggregate;
 using Order.Domain.Repositories;

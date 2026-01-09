@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace BuildingBlocks.Domain.SeedWork;
+namespace BuildingBlocks.Domain;
 
 /// <summary>
 /// Base class for implementing type-safe enumerations in the domain.

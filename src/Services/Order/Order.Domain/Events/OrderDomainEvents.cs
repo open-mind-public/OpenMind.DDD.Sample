@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Order.Domain.ValueObjects;
 
 namespace Order.Domain.Events;

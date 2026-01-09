@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Payment.Domain.ValueObjects;
 
 namespace Payment.Domain.Events;

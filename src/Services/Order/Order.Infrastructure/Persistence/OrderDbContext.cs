@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Order.Domain.Aggregates.OrderAggregate;

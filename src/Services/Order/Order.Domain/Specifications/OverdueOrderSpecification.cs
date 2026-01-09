@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Order.Domain.Aggregates.OrderAggregate;
 
 namespace Order.Domain.Specifications;

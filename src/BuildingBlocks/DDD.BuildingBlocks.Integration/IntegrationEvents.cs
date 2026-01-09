@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Integration.Events;
+namespace BuildingBlocks.Integration;
 
 /// <summary>
 /// Base class for Integration Events.

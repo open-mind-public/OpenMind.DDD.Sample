@@ -1,7 +1,6 @@
-using BuildingBlocks.Integration.EventBus;
-using BuildingBlocks.Integration.Events;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using BuildingBlocks.Integration;
 
 namespace Payment.Infrastructure.Messaging;
 

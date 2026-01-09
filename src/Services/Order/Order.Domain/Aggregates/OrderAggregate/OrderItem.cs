@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using Order.Domain.ValueObjects;
 
 namespace Order.Domain.Aggregates.OrderAggregate;
@@ -25,30 +25,18 @@ public class OrderItem : Entity<OrderItemId>
     public string ProductName { get; private set; }
 
     /// <summary>
-    /// Unit price at the time of ordering (snapshot).
+    /// Unit price at the time of ordering (snapshot to protect from Product context changes).
     /// </summary>
     public Money UnitPrice { get; private set; }
 
-    /// <summary>
-    /// Quantity ordered.
-    /// </summary>
     public int Quantity { get; private set; }
-
-    /// <summary>
-    /// Optional discount applied to this item.
-    /// </summary>
     public Money Discount { get; private set; }
-
-    /// <summary>
-    /// Calculated total for this item.
-    /// </summary>
     public Money Total => CalculateTotal();
 
-    private OrderItem() { } // EF Core
+    private OrderItem() { }
 
     /// <summary>
-    /// Factory method for creating OrderItems.
-    /// Encapsulates creation logic and enforces invariants.
+    /// Factory method - encapsulates creation logic and enforces invariants.
     /// </summary>
     internal static OrderItem Create(
         ProductId productId,
@@ -73,9 +61,6 @@ public class OrderItem : Entity<OrderItemId>
         };
     }
 
-    /// <summary>
-    /// Updates the quantity of this item.
-    /// </summary>
     internal void SetQuantity(int quantity)
     {
         if (quantity <= 0)
@@ -84,9 +69,6 @@ public class OrderItem : Entity<OrderItemId>
         Quantity = quantity;
     }
 
-    /// <summary>
-    /// Adds quantity to this item.
-    /// </summary>
     internal void AddQuantity(int quantity)
     {
         if (quantity <= 0)
@@ -95,9 +77,6 @@ public class OrderItem : Entity<OrderItemId>
         Quantity += quantity;
     }
 
-    /// <summary>
-    /// Applies a discount to this item.
-    /// </summary>
     internal void ApplyDiscount(Money discount)
     {
         if (discount.Amount > UnitPrice.Amount * Quantity)

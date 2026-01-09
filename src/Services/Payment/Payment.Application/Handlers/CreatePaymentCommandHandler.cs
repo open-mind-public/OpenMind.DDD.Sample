@@ -1,4 +1,4 @@
-using BuildingBlocks.Domain.SeedWork;
+using BuildingBlocks.Domain;
 using MediatR;
 using Payment.Application.Commands;
 using Payment.Domain.Aggregates.PaymentAggregate;

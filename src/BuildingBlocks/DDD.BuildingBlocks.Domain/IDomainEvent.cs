@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace BuildingBlocks.Domain.SeedWork;
+namespace BuildingBlocks.Domain;
 
 /// <summary>
 /// Marker interface for Domain Events.

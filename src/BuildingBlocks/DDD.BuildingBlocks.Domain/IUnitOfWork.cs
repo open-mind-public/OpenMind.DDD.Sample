@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Domain.SeedWork;
+namespace BuildingBlocks.Domain;
 
 /// <summary>
 /// Unit of Work pattern interface.
