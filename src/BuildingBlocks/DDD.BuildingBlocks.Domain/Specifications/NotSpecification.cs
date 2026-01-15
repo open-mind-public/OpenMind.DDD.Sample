@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace BuildingBlocks.Domain;
+namespace BuildingBlocks.Domain.Specifications;
 
 internal class NotSpecification<T> : Specification<T>
 {

@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace BuildingBlocks.Domain;
+namespace BuildingBlocks.Domain.Specifications;
 
 /// <summary>
 /// Specification Pattern implementation (Eric Evans, DDD).

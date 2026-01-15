@@ -26,9 +26,6 @@ public interface IOrderPricingService : IDomainService
     bool IsDiscountApplicable(Aggregates.OrderAggregate.Order order, string discountCode);
 }
 
-/// <summary>
-/// Implementation of the Order Pricing Domain Service.
-/// </summary>
 public class OrderPricingService : IOrderPricingService
 {
     public Money CalculateFinalPrice(Aggregates.OrderAggregate.Order order, decimal discountPercentage = 0)

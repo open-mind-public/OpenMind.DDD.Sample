@@ -1,6 +1,5 @@
 using BuildingBlocks.Domain;
 using Order.Domain.Aggregates.OrderAggregate;
-using Order.Domain.Specifications;
 using Order.Domain.ValueObjects;
 
 namespace Order.Domain.Factories;
@@ -24,9 +23,6 @@ public class OrderFactory(CreateOrderData data) : Factory<Aggregates.OrderAggreg
 
         if (data.Items == null || !data.Items.Any())
             throw new DomainException("Order must have at least one item");
-
-        var minItemsSpec = new MinItemsCountSpecification(1);
-        var maxItemsSpec = new MaxItemsCountSpecification(100);
 
         if (data.Items.Count > 100)
             throw new DomainException("Order cannot have more than 100 items");

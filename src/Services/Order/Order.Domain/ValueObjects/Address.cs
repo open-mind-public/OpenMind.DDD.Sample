@@ -14,7 +14,7 @@ public class Address : ValueObject
     public string Country { get; }
     public string ZipCode { get; }
 
-    private Address() { } // EF Core
+    private Address() { }
 
     public Address(string street, string city, string state, string country, string zipCode)
     {

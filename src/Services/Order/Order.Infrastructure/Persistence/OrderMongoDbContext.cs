@@ -57,7 +57,7 @@ public class OrderMongoDbContext(IMongoDatabase database, IMediator mediator) : 
 
 public class MongoDbSettings
 {
-    public string ConnectionString { get; set; } = "mongodb://localhost:27017";
-    public string DatabaseName { get; set; } = "OrderDb";
+    public string? ConnectionString { get; set; }
+    public string? DatabaseName { get; set; }
 }
 

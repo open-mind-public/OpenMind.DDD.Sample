@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using BuildingBlocks.Domain;
+using BuildingBlocks.Domain.Specifications;
 
 namespace Order.Domain.Specifications;
 
