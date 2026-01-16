@@ -2,32 +2,6 @@
 
 A comprehensive implementation of Domain-Driven Design (DDD) patterns from Eric Evans' book "Domain-Driven Design: Tackling Complexity in the Heart of Software" using C# and .NET 8.
 
-## 🏗️ Architecture Overview
-
-This solution demonstrates a microservices architecture with two bounded contexts:
-- **Order Service** - Manages customer orders
-- **Payment Service** - Handles payment processing
-
-```
-DDD/
-├── src/
-│   ├── BuildingBlocks/          # Shared DDD building blocks
-│   │   ├── BuildingBlocks.Domain/
-│   │   └── BuildingBlocks.Integration/
-│   └── Services/
-│       ├── Order/               # Order Bounded Context
-│       │   ├── Order.Domain/
-│       │   ├── Order.Application/
-│       │   ├── Order.Infrastructure/
-│       │   └── Order.API/
-│       └── Payment/             # Payment Bounded Context
-│           ├── Payment.Domain/
-│           ├── Payment.Application/
-│           ├── Payment.Infrastructure/
-│           └── Payment.API/
-└── DDD.sln
-```
-
 ## 🎯 Key DDD Principles Demonstrated
 
 1. **Rich Domain Model**: Business logic in domain entities, not services
@@ -241,6 +215,31 @@ public static Order Create(CustomerId customerId, Address address)
 │       ▼         │                    │                 │
 │ Status = Paid   │                    │                 │
 └─────────────────┘                    └─────────────────┘
+```
+## 🏗️ Project Overview
+
+This solution demonstrates a microservices architecture with two bounded contexts:
+- **Order Service** - Manages customer orders
+- **Payment Service** - Handles payment processing
+
+```
+DDD/
+├── src/
+│   ├── BuildingBlocks/          # Shared DDD building blocks
+│   │   ├── BuildingBlocks.Domain/
+│   │   └── BuildingBlocks.Integration/
+│   └── Services/
+│       ├── Order/               # Order Bounded Context
+│       │   ├── Order.Domain/
+│       │   ├── Order.Application/
+│       │   ├── Order.Infrastructure/
+│       │   └── Order.API/
+│       └── Payment/             # Payment Bounded Context
+│           ├── Payment.Domain/
+│           ├── Payment.Application/
+│           ├── Payment.Infrastructure/
+│           └── Payment.API/
+└── DDD.sln
 ```
 
 ## 🚀 Getting Started
