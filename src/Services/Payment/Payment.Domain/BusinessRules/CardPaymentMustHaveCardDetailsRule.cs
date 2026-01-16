@@ -6,21 +6,12 @@ namespace Payment.Domain.BusinessRules;
 /// <summary>
 /// Business rule: Card payments require card details.
 /// </summary>
-public class CardPaymentMustHaveCardDetailsRule : IBusinessRule
+public class CardPaymentMustHaveCardDetailsRule(PaymentMethod method, bool hasCardDetails) : IBusinessRule
 {
-    private readonly PaymentMethod _method;
-    private readonly bool _hasCardDetails;
-
-    public CardPaymentMustHaveCardDetailsRule(PaymentMethod method, bool hasCardDetails)
-    {
-        _method = method;
-        _hasCardDetails = hasCardDetails;
-    }
-
     public bool IsBroken()
     {
-        var isCardPayment = _method == PaymentMethod.CreditCard || _method == PaymentMethod.DebitCard;
-        return isCardPayment && !_hasCardDetails;
+        var isCardPayment = method == PaymentMethod.CreditCard || method == PaymentMethod.DebitCard;
+        return isCardPayment && !hasCardDetails;
     }
 
     public string Message => "Card details are required for credit card and debit card payments.";

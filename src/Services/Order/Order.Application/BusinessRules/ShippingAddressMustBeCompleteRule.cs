@@ -5,30 +5,17 @@ namespace Order.Application.BusinessRules;
 /// <summary>
 /// Business rule: Shipping address must be complete.
 /// </summary>
-public class ShippingAddressMustBeCompleteRule : IBusinessRule
+public class ShippingAddressMustBeCompleteRule(
+    string? street, 
+    string? city, 
+    string? country, 
+    string? zipCode) : IBusinessRule
 {
-    private readonly string? _street;
-    private readonly string? _city;
-    private readonly string? _country;
-    private readonly string? _zipCode;
-
-    public ShippingAddressMustBeCompleteRule(
-        string? street, 
-        string? city, 
-        string? country, 
-        string? zipCode)
-    {
-        _street = street;
-        _city = city;
-        _country = country;
-        _zipCode = zipCode;
-    }
-
     public bool IsBroken() => 
-        string.IsNullOrWhiteSpace(_street) ||
-        string.IsNullOrWhiteSpace(_city) ||
-        string.IsNullOrWhiteSpace(_country) ||
-        string.IsNullOrWhiteSpace(_zipCode);
+        string.IsNullOrWhiteSpace(street) ||
+        string.IsNullOrWhiteSpace(city) ||
+        string.IsNullOrWhiteSpace(country) ||
+        string.IsNullOrWhiteSpace(zipCode);
 
     public string Message => "Shipping address must include street, city, country, and zip code.";
     

@@ -5,16 +5,9 @@ namespace Order.Application.BusinessRules;
 /// <summary>
 /// Business rule: Customer ID must be provided for order creation.
 /// </summary>
-public class CustomerIdMustBeProvidedRule : IBusinessRule
+public class CustomerIdMustBeProvidedRule(Guid customerId) : IBusinessRule
 {
-    private readonly Guid _customerId;
-
-    public CustomerIdMustBeProvidedRule(Guid customerId)
-    {
-        _customerId = customerId;
-    }
-
-    public bool IsBroken() => _customerId == Guid.Empty;
+    public bool IsBroken() => customerId == Guid.Empty;
 
     public string Message => "Customer ID is required to create an order.";
     

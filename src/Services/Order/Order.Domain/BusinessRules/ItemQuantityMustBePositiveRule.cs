@@ -6,18 +6,11 @@ namespace Order.Domain.BusinessRules;
 /// <summary>
 /// Business rule: Item quantity must be positive.
 /// </summary>
-public class ItemQuantityMustBePositiveRule : IBusinessRule
+public class ItemQuantityMustBePositiveRule(int quantity) : IBusinessRule
 {
-    private readonly int _quantity;
+    public bool IsBroken() => quantity <= 0;
 
-    public ItemQuantityMustBePositiveRule(int quantity)
-    {
-        _quantity = quantity;
-    }
-
-    public bool IsBroken() => _quantity <= 0;
-
-    public string Message => $"Item quantity must be greater than zero. Provided: {_quantity}.";
+    public string Message => $"Item quantity must be greater than zero. Provided: {quantity}.";
     
     public string Code => "INVALID_ITEM_QUANTITY";
 }

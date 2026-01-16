@@ -6,16 +6,9 @@ namespace Payment.Domain.BusinessRules;
 /// <summary>
 /// Business rule: Card must not be expired for payment processing.
 /// </summary>
-public class CardMustNotBeExpiredRule : IBusinessRule
+public class CardMustNotBeExpiredRule(CardDetails? cardDetails) : IBusinessRule
 {
-    private readonly CardDetails? _cardDetails;
-
-    public CardMustNotBeExpiredRule(CardDetails? cardDetails)
-    {
-        _cardDetails = cardDetails;
-    }
-
-    public bool IsBroken() => _cardDetails != null && _cardDetails.IsExpired();
+    public bool IsBroken() => cardDetails != null && cardDetails.IsExpired();
 
     public string Message => "The card has expired. Please use a valid card.";
     

@@ -6,18 +6,11 @@ namespace Payment.Domain.BusinessRules;
 /// <summary>
 /// Business rule: Payment can only be refunded when in completed status.
 /// </summary>
-public class PaymentMustBeRefundableRule : IBusinessRule
+public class PaymentMustBeRefundableRule(PaymentStatus currentStatus) : IBusinessRule
 {
-    private readonly PaymentStatus _currentStatus;
+    public bool IsBroken() => !currentStatus.CanBeRefunded();
 
-    public PaymentMustBeRefundableRule(PaymentStatus currentStatus)
-    {
-        _currentStatus = currentStatus;
-    }
-
-    public bool IsBroken() => !_currentStatus.CanBeRefunded();
-
-    public string Message => $"Payment cannot be refunded when in '{_currentStatus.Name}' status. Only completed payments can be refunded.";
+    public string Message => $"Payment cannot be refunded when in '{currentStatus.Name}' status. Only completed payments can be refunded.";
     
     public string Code => "PAYMENT_NOT_REFUNDABLE";
 }

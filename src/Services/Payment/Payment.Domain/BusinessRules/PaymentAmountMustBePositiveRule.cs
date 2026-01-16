@@ -5,18 +5,11 @@ namespace Payment.Domain.BusinessRules;
 /// <summary>
 /// Business rule: Payment amount must be positive.
 /// </summary>
-public class PaymentAmountMustBePositiveRule : IBusinessRule
+public class PaymentAmountMustBePositiveRule(decimal amount) : IBusinessRule
 {
-    private readonly decimal _amount;
+    public bool IsBroken() => amount <= 0;
 
-    public PaymentAmountMustBePositiveRule(decimal amount)
-    {
-        _amount = amount;
-    }
-
-    public bool IsBroken() => _amount <= 0;
-
-    public string Message => $"Payment amount must be greater than zero. Provided: {_amount}.";
+    public string Message => $"Payment amount must be greater than zero. Provided: {amount}.";
     
     public string Code => "INVALID_PAYMENT_AMOUNT";
 }
