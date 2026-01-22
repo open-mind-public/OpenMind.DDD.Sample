@@ -1,4 +1,4 @@
-# Domain-Driven Design Microservices Application
+# Domain-Driven Design
 
 A comprehensive implementation of Domain-Driven Design (DDD) patterns from Eric Evans' book "Domain-Driven Design: Tackling Complexity in the Heart of Software" using C# and .NET 10.
 
